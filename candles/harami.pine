@@ -1,0 +1,28 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © lruczu
+
+//@version=5
+indicator("Harami", overlay=true)
+
+doji_distance() =>
+    body = math.max(close, open) - math.min(close, open)
+    body / (high - low)
+
+is_harami(doji_ratio) =>
+    lower_previous_body = math.min(close[1], open[1])
+    lower_current_body = math.min(close, open)
+
+    upper_previous_body = math.max(close[1], open[1])
+    upper_current_body = math.max(close, open)
+
+    if lower_previous_body <= lower_current_body and upper_previous_body >= upper_current_body
+        if doji_distance() <= doji_ratio
+            true
+        else
+            false
+    else
+        false
+
+if is_harami(0.1)
+    pattern = box.new(bar_index - 1, math.max(high, high[1]), bar_index, math.min(low, low[1]), bgcolor=color.new(color.black, 50))
+    box.set_border_color(pattern, color.new(color.black, 100))

@@ -1,0 +1,32 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © lruczu
+
+//@version=5
+indicator("Szczypce", overlay=true)
+
+is_szczypce(prop) =>
+    min_low = math.min(low[1], low)
+    max_low = math.max(low[1], low)
+
+    min_high = math.min(high[1], high)
+    max_high = math.max(high[1], high)
+
+    low_distance = (max_low - min_low) / max_low
+    high_distance = (max_high - min_high) / min_high
+
+    if math.min(low_distance, high_distance) >= prop
+        0
+    else
+        if high_distance <= low_distance
+            -1
+        else
+            1
+
+szczypce = is_szczypce(0.001)
+
+if szczypce == 1
+    pattern = box.new(bar_index - 1, math.max(high, high[1]), bar_index, math.min(low, low[1]), bgcolor=color.new(color.green, 80))
+    box.set_border_color(pattern, color.new(color.black, 100))
+else if szczypce == -1
+    pattern = box.new(bar_index - 1, math.max(high, high[1]), bar_index, math.min(low, low[1]), bgcolor=color.new(color.red, 80))
+    box.set_border_color(pattern, color.new(color.black, 100))

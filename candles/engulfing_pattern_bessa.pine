@@ -1,0 +1,36 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © lruczu
+
+//@version=5
+indicator("Engulfing pattern bessa", overlay=true)
+// formacja objecia bessy
+
+is_engulfing() =>
+    is_previous_rising = close[1] > open[1]
+    is_current_rising = close > open
+
+    if is_previous_rising == is_current_rising
+        false
+    else
+        lower_previous_body = math.min(close[1], open[1])
+        lower_current_body = math.min(close, open)
+
+        upper_previous_body = math.max(close[1], open[1])
+        upper_current_body = math.max(close, open)
+
+        if lower_current_body <= lower_previous_body and upper_current_body >= upper_previous_body
+            true
+        else
+            false
+
+is_volume_big() =>
+    if volume < volume[1]
+        false
+    else if volume < volume[2]
+        false
+    else
+        true
+
+if is_engulfing() and is_volume_big()
+    pattern = box.new(bar_index - 1, math.max(high, high[1]), bar_index, math.min(low, low[1]), bgcolor=color.new(color.red, 70))
+    box.set_border_color(pattern, color.new(color.black, 100))

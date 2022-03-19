@@ -1,0 +1,20 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © lruczu
+
+//@version=5
+indicator("Inverse hammer", overlay=true, max_labels_count = 50)
+
+// mlot - bullsh case
+// wisielec - bearish case
+
+//var candle = box.new(0, 0, 0, 0, bgcolor=color.new(color.blue, 90))
+
+is_hammer(ratio) =>
+    body = math.abs(close - open)
+    lower_shadow = math.min(close, open) - low
+    upper_shadow = high - math.max(close, open)
+
+    upper_shadow / body > ratio and upper_shadow / lower_shadow > 10
+
+if is_hammer(2)
+    label.new(bar_index, high, color=color.new(color.green, 70))

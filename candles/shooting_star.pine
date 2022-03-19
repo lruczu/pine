@@ -1,0 +1,41 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © lruczu
+
+//@version=5
+indicator("Shooting star", overlay=true)
+
+
+is_inverse_hammer(ratio) =>
+    body = math.abs(close[1] - open[1])
+    lower_shadow = math.min(close[1], open[1]) - low[1]
+    upper_shadow = high[1] - math.max(close[1], open[1])
+
+    upper_shadow / body > ratio and upper_shadow / lower_shadow > 10
+
+
+is_shooting_star(middle_body_prop, candle_body_coverage) =>
+    is_first_rising = close[2] > open[2]
+    is_current_rising = close > open
+
+    if is_first_rising == false or is_current_rising == true
+        false
+    else if is_inverse_hammer(2) == false
+        false
+    else
+        first_body = close[2] - open[2]
+        second_body = math.max(close[1], open[1]) - math.min(close[1], open[1])
+        third_body = open - close
+
+        if second_body > math.min(first_body, third_body)
+            false
+        else
+            decision_point = close[2] - candle_body_coverage * first_body
+            if close > decision_point
+                false
+            else
+                true
+
+// try to add: volume > volume[2]
+if is_shooting_star(0.1, 0.5)
+    pattern = box.new(bar_index - 2, math.max(high, high[1], high[2]), bar_index, math.min(low, low[1], low[2]), bgcolor=color.new(color.red, 70))
+    box.set_border_color(pattern, color.new(color.black, 100))

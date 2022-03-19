@@ -1,0 +1,31 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © lruczu
+
+//@version=5
+indicator("label", overlay = true)
+
+var ath = label.new(na, na, "", color = color.orange, style = label.style_label_down)
+var n_bars = 0
+
+var first_bar_time = time(timeframe.period)
+var ath_value = high
+
+n_bars += 1
+
+var stats = table.new(position.top_right, 2, 3, bgcolor=color.red)
+
+if high > ath_value
+    ath_value := high
+    label.set_xy(ath, bar_index, high)
+    label.set_text(ath, "ATH: " + str.tostring(high))
+
+// first date on plot
+// number of bars
+// number of bars satisfying a condition
+if barstate.islast
+    table.cell(stats, 0, 0, "A")
+    table.cell(stats, 0, 1, "B")
+    table.cell(stats, 0, 2, "C")
+    table.cell(stats, 1, 0, "D")
+    table.cell(stats, 1, 1, "E")
+    table.cell(stats, 1, 2, "F")
